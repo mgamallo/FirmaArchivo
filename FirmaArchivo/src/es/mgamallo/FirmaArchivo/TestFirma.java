@@ -11,7 +11,8 @@ public class TestFirma {
 		// TODO Auto-generated method stub
 		File fichero = new File("temp");
 		fichero.mkdirs();
-		Firma.firmar("pruebaurg.pdf", "temp\\firmado.pdf", "certificadomgg.pfx", "1519");
+		// Firma.firmar("pruebaurg.pdf", "temp\\firmado.pdf", "certificadomgg.pfx", "1519");
+		Firma.firmarContenedorIExplore("pruebaurg.pdf", "temp\\firmado.pdf", "certificadomgg.pfx", "1519");
 	}
 
 }

@@ -1,7 +1,15 @@
 package es.mgamallo.FirmaArchivo;
 
 
+import java.awt.HeadlessException;
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
@@ -15,6 +23,8 @@ public class VentanaDialogo extends javax.swing.JFrame {
 	static String clavePin = "";
 	static boolean usuarioDeUrgencias = false;
  	static String usuario;
+ 	static boolean tarjeta = false;
+ 	
 	
     public VentanaDialogo() {
         initComponents();
@@ -46,10 +56,10 @@ public class VentanaDialogo extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(248, 240, 240));
 
         progresoCarpetaJL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        progresoCarpetaJL.setText("Archivo 1 de 100");
+        progresoCarpetaJL.setText("Archivo ? de ?");
 
         progresoTotalJL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        progresoTotalJL.setText("Carpeta 1 de 1");
+        progresoTotalJL.setText("Carpeta ? de ?");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -122,7 +132,10 @@ public class VentanaDialogo extends javax.swing.JFrame {
     	rutaCertificado ="";
     	
     	String passwordZip = "";
-     	
+     	    	    	
+    	int opcionToken = JOptionPane.showOptionDialog(null, "¿Con qué vas a firmar?", "Selector de firma", 
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Certificado","Tarjeta"}, "Certificado");
+    	
     	if(args.length>0){
     		usuario = args[0];
     		if(args[1].equals("urgencias")){
@@ -149,12 +162,18 @@ public class VentanaDialogo extends javax.swing.JFrame {
     		
     		System.out.println(usuarioDeUrgencias);
 
-
-        	SelectorUsuario selector = new SelectorUsuario(null, true);
-        	usuario = selector.getUsuario();
     	}	
     		// String nombreCertificado = "cal\\certificados\\" + usuario.toLowerCase() + ".pfx";
     		
+    	
+
+		
+		if(opcionToken == JOptionPane.OK_OPTION){
+			
+			SelectorUsuario selector = new SelectorUsuario(null, true);
+        	usuario = selector.getUsuario();
+        	
+			
     		String nombreCertificado = "cal\\certificados\\" + usuario.toLowerCase() + ".zip";
     		
     		System.out.println(nombreCertificado);
@@ -193,9 +212,55 @@ public class VentanaDialogo extends javax.swing.JFrame {
     				JOptionPane.showMessageDialog(null, "Clave del zip erronea");
     				System.exit(0);
     			}
- 
-    			
     		}
+		}else if(opcionToken == JOptionPane.NO_OPTION){
+			
+			tarjeta = true;
+			
+			try {
+				KeyStore ks = KeyStore.getInstance("Windows-MY");
+				ks.load(null,null);
+				
+				Enumeration elist = ks.aliases();
+				
+
+				ArrayList<String> certificados = new ArrayList<String>();
+				while(elist.hasMoreElements()){
+					certificados.add((String) elist.nextElement());
+				}
+				
+				Object seleccion = JOptionPane.showInputDialog(null, "Seleccione un certificado","Selector de certificados",
+						JOptionPane.QUESTION_MESSAGE,null,certificados.toArray(),certificados.get(0));
+				
+				usuario = seleccion.toString();
+				
+				System.out.println(usuario);
+				
+				DialogoPassword dialogo = new DialogoPassword(" el pin.");
+
+				clavePin = dialogo.getClave();
+			} catch (HeadlessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CertificateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		else{
+			System.exit(0);
+		}
+
    	
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -223,7 +288,7 @@ public class VentanaDialogo extends javax.swing.JFrame {
                 ventana.setVisible(true);
                 
                 
-                Worker worker = new Worker(usuario, ventana.progresoCarpetaJL, ventana.progresoTotalJL, ventana.barraProgresoCarpeta, ventana.barraProgresoTotal,rutaCertificado,clavePin,usuarioDeUrgencias);
+                Worker worker = new Worker(usuario, ventana.progresoCarpetaJL, ventana.progresoTotalJL, ventana.barraProgresoCarpeta, ventana.barraProgresoTotal,rutaCertificado,clavePin,usuarioDeUrgencias,tarjeta);
                 worker.execute();
                 
                 

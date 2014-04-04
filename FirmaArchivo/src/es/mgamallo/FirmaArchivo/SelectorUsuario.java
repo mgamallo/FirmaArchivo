@@ -245,7 +245,7 @@ public class SelectorUsuario extends javax.swing.JDialog {
     	
 		
 		DefaultComboBoxModel modelo = new DefaultComboBoxModel();
-		
+		modelo.addElement("Alias");
 		for(int i=0;i<zips.length;i++){
 			String cadena = zips[i].getName();
 			int aux = cadena.lastIndexOf(".");

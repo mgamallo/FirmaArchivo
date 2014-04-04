@@ -10,6 +10,10 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import javax.swing.JOptionPane;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
@@ -19,21 +23,26 @@ import com.lowagie.text.pdf.PdfStamper;
 
 
 /**
- * @author Imaginanet
- * 
+ * @author mgamallo
+ */
+
+
+/**
+ * Fuentes:
  * http://www.coderanch.com/how-to/javadoc/itext-2.1.7/com/lowagie/text/pdf/PdfSignatureAppearance.html
  * http://www.imaginanet.com/blog/firmar-y-verificar-firma-digital-en-pdfs-mediante-java-con-itext.html
  * http://www.bouncycastle.org/latest_releases.html
  * http://xml-utils.com/2006/11/26/firmando-documentos-pdf-con-itext/
  * http://switchoffandletsgo.blogspot.com.es/2008/07/importar-certificados-en-java.html#.UxMMNZWPKHs
  */
+
 public class Firma {
 	
 	static KeyStore ks = null;
 
 	public static boolean firmar(String ficheroOrigen, String ficheroDestino, String certificado, String clave){
 
-		if(comprobarCertificado(certificado, clave)){
+		 if(comprobarCertificado(certificado, clave)){
 			try {
 				String alias = (String)ks.aliases().nextElement();
 				PrivateKey key = (PrivateKey)ks.getKey(alias, clave.toCharArray());
@@ -79,11 +88,140 @@ public class Firma {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		 }
 		
 		return false;
 	}
-	
+
+	public static boolean firmarContenedorIExplore(String ficheroOrigen, String ficheroDestino,String usuario, String clave){
+		
+			// if(comprobarCertificado(certificado, clave)){
+				try {
+
+					ks = KeyStore.getInstance("Windows-MY");
+					try {
+						ks.load(null,null);
+					} catch (CertificateException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					/*
+					Enumeration elist = ks.aliases();
+					
+					String alias;
+					
+					ArrayList<String> certificados = new ArrayList<String>();
+					while(elist.hasMoreElements()){
+						certificados.add((String) elist.nextElement());
+					}
+					
+					Object seleccion = JOptionPane.showInputDialog(null, "Seleccione un certificado","Selector de certificados",
+							JOptionPane.QUESTION_MESSAGE,null,certificados.toArray(),certificados.get(0));
+					
+					alias = seleccion.toString();
+					
+					DialogoPassword dialogo = new DialogoPassword(" la clave del zip");
+
+	    			clave = dialogo.getClave();
+					
+					*/
+					
+					
+					
+					PrivateKey key = (PrivateKey)ks.getKey(usuario, clave.toCharArray());
+					
+
+					Certificate[] chain = ks.getCertificateChain(usuario);
+
+					
+					// Recibimos como parámetro de entrada el nombre del archivo PDF a firmar
+
+		            try {
+						PdfReader reader = new PdfReader(ficheroOrigen); 
+						FileOutputStream fout = new FileOutputStream(ficheroDestino);
+
+						// Añadimos firma al documento PDF
+						PdfStamper stp = PdfStamper.createSignature(reader, fout, '?');
+						PdfSignatureAppearance sap = stp.getSignatureAppearance();
+						sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
+						//sap.setReason("Firma PKCS12");
+						sap.setLocation("CHOP");
+											
+						// Añade la firma visible. Podemos comentarla para que no sea visible.
+						// sap.setVisibleSignature(new Rectangle(100,100,200,200),1,null);
+						stp.close();
+						
+						return true;
+						
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (DocumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					/*
+					while(elist.hasMoreElements()){
+						alias = (String) elist.nextElement();
+						if(alias.contains("MANUEL")){
+							PrivateKey key = (PrivateKey)ks.getKey(alias, clave.toCharArray());
+							Certificate[] chain = ks.getCertificateChain(alias);
+							
+							// Recibimos como parámetro de entrada el nombre del archivo PDF a firmar
+				            try {
+								PdfReader reader = new PdfReader(ficheroOrigen); 
+								FileOutputStream fout = new FileOutputStream(ficheroDestino);
+
+								// Añadimos firma al documento PDF
+								PdfStamper stp = PdfStamper.createSignature(reader, fout, '?');
+								PdfSignatureAppearance sap = stp.getSignatureAppearance();
+								sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
+								//sap.setReason("Firma PKCS12");
+								sap.setLocation("CHOP");
+													
+								// Añade la firma visible. Podemos comentarla para que no sea visible.
+								// sap.setVisibleSignature(new Rectangle(100,100,200,200),1,null);
+								stp.close();
+								
+								return true;
+								
+							} catch (FileNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (DocumentException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						
+					}
+					*/
+				} catch (UnrecoverableKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (KeyStoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			// }
+			
+			return false;
+		}
+
 	
 	
 	private static boolean comprobarCertificado(String certificado, String clave){

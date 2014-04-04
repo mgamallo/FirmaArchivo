@@ -25,13 +25,14 @@ public class Worker extends SwingWorker<Double, Integer>{
 	private String password = "";
 	private boolean usuarioUrgencias;
 	private String usuario;
+	private boolean tarjeta;
 	private VentanaDialogo ventana;
 	
 	private String rutaDirectorio ="";
 	
 	private Filechooser fc;
 	
-	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, boolean usuarioUrgencias){
+	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, boolean usuarioUrgencias, boolean tarjeta){
 		this.conteoCarpeta =conteoCarpeta;
 		this.conteoTotal = conteoTotal;
 		this.progresoCarpeta = progresoCapeta;
@@ -41,6 +42,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		this.usuarioUrgencias = usuarioUrgencias;
 		//this.ventana = ventana;
 		this.usuario = usuario;
+		this.tarjeta = tarjeta;
 	}
 	
 	@Override
@@ -54,7 +56,8 @@ public class Worker extends SwingWorker<Double, Integer>{
 			rutaDirectorio = RUTAURG;
 			if(!(new File(rutaDirectorio).exists()))
 				rutaDirectorio = RUTAURGB;
-			rutaDirectorio += ("\\01 " + usuario + "\\02 Revisado");
+			if(!tarjeta)
+				rutaDirectorio += ("\\01 " + usuario + "\\02 Revisado");
 		}
 		else{
 			rutaDirectorio = RUTA;
@@ -80,6 +83,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		//JOptionPane.showMessageDialog(null, certificado);
 		//JOptionPane.showMessageDialog(null, certificado);
 		
+		
 		for(int i=0;i<numeroCarpetas;i++){
 		
 			boolean pinCorrecto;
@@ -89,11 +93,17 @@ public class Worker extends SwingWorker<Double, Integer>{
 				if(i == 0 && j == 0){
 					JOptionPane.showMessageDialog(null, "Empieza la firma");
 				}
-				pinCorrecto = Firma.firmar(fc.carpetas[i].pdfs[j].getAbsolutePath(), 
+
+				if(!tarjeta){
+					pinCorrecto = Firma.firmar(fc.carpetas[i].pdfs[j].getAbsolutePath(), 
 						renombrarFicheroFirmado(fc.carpetas[i].pdfs[j]), certificado, password);
-				
+				}
+				else{
+					pinCorrecto = Firma.firmarContenedorIExplore(fc.carpetas[i].pdfs[j].getAbsolutePath(), 
+							renombrarFicheroFirmado(fc.carpetas[i].pdfs[j]), usuario, password);
+				}
 				// JOptionPane.showMessageDialog(null, pinCorrecto);	
-				
+
 				if(!pinCorrecto){
     				JOptionPane.showMessageDialog(null, "Fallo en la firma. Se aborta la firma.");
     				System.exit(0);
