@@ -133,8 +133,7 @@ public class VentanaDialogo extends javax.swing.JFrame {
     	
     	String passwordZip = "";
      	    	    	
-    	int opcionToken = JOptionPane.showOptionDialog(null, "¿Con qué vas a firmar?", "Selector de firma", 
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Certificado","Tarjeta"}, "Certificado");
+    	
     	
     	if(args.length>0){
     		usuario = args[0];
@@ -160,19 +159,21 @@ public class VentanaDialogo extends javax.swing.JFrame {
     			usuarioDeUrgencias = false;
     		}
     		
+			SelectorUsuario selector = new SelectorUsuario(null, true);
+        	usuario = selector.getUsuario();
+    		
     		System.out.println(usuarioDeUrgencias);
 
     	}	
     		// String nombreCertificado = "cal\\certificados\\" + usuario.toLowerCase() + ".pfx";
     		
     	
-
+    	int opcionToken = JOptionPane.showOptionDialog(null, "¿Con qué vas a firmar?", "Selector de firma", 
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Certificado","Tarjeta"}, "Certificado");
 		
 		if(opcionToken == JOptionPane.OK_OPTION){
 			
-			SelectorUsuario selector = new SelectorUsuario(null, true);
-        	usuario = selector.getUsuario();
-        	
+       	
 			
     		String nombreCertificado = "cal\\certificados\\" + usuario.toLowerCase() + ".zip";
     		

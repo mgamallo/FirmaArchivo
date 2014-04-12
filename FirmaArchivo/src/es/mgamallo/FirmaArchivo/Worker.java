@@ -190,7 +190,10 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		String nombreCarpetaPdf = archivoOrigen.getParentFile().getName();
 		int quitarUsuario = nombreCarpetaPdf.lastIndexOf(" ");
-		nombreCarpetaPdf = nombreCarpetaPdf.substring(0,quitarUsuario);
+		if(quitarUsuario != -1 || quitarUsuario != 0){
+			nombreCarpetaPdf = nombreCarpetaPdf.substring(0,quitarUsuario);
+		}
+		
 		System.out.println(nombreCarpetaPdf);
 		
 		String rutaCarpetaAbuela = archivoOrigen.getParentFile().getParentFile().getParentFile().getAbsolutePath();
