@@ -185,7 +185,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		int ultimaR = nombrePdf.lastIndexOf(".");
 		
-		String nuevoNombrePdf = nombrePdf.substring(0,ultimaR) + "_firmado.pdf";
+		String nuevoNombrePdf = nombrePdf.substring(0,ultimaR) + "_f.pdf";
 		System.out.println(nuevoNombrePdf);
 		
 		String nombreCarpetaPdf = archivoOrigen.getParentFile().getName();
@@ -194,13 +194,36 @@ public class Worker extends SwingWorker<Double, Integer>{
 			nombreCarpetaPdf = nombreCarpetaPdf.substring(0,quitarUsuario);
 		}
 		
+		/*          *********************************************************************
+		 		
+
+		 		
+		 */
+		
+		String carpetaFirmado = "";
+		
+		if(VentanaDialogo.ianus_xedoc == 1){
+			carpetaFirmado = "\\03 Firmado\\";
+		}
+		else if(VentanaDialogo.ianus_xedoc == 3){
+			carpetaFirmado = "\\03 Firmado Xedoc\\";
+		}
+		else{
+			if(sePuedeSubirEnIanus(nombrePdf)){
+				carpetaFirmado = "\\03 Firmado\\";
+			}
+			else{
+				carpetaFirmado = "\\03 Firmado Xedoc\\";
+			}
+		}
+	
 		System.out.println(nombreCarpetaPdf);
 		
 		String rutaCarpetaAbuela = archivoOrigen.getParentFile().getParentFile().getParentFile().getAbsolutePath();
 		
 		System.out.println(rutaCarpetaAbuela);
 		
-		String rutaFinalDirectorio = rutaCarpetaAbuela + "\\03 Firmado\\" + nombreCarpetaPdf + "\\" ;
+		String rutaFinalDirectorio = rutaCarpetaAbuela +  carpetaFirmado /* "\\03 Firmado\\" */ + nombreCarpetaPdf + "\\" ;
 		
 		File crearCarpetaDestino = new File(rutaFinalDirectorio);
 		crearCarpetaDestino.mkdirs();
@@ -239,5 +262,23 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		return sinErrores;
 		
+	}
+	
+	
+	
+	
+	private boolean sePuedeSubirEnIanus(String nombrePdf){
+		
+		int inicio = nombrePdf.lastIndexOf("@") + 1;
+		int fin = nombrePdf.lastIndexOf("r_f");
+		
+		String documento = nombrePdf.substring(inicio,fin);
+		
+		if(VentanaDialogo.titIanus.containsKey(documento)){
+			return true;
+		}
+		
+		
+		return false;
 	}
 }

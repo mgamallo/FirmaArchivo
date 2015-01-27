@@ -1,5 +1,6 @@
 package es.mgamallo.FirmaArchivo;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -49,8 +50,9 @@ public class SelectorUsuario extends javax.swing.JDialog {
         jBotonNUsuario = new javax.swing.JButton();
         jEtiquetaNUsuario = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jBoton1Ianus = new javax.swing.JButton();
-        jBoton2Ianus = new javax.swing.JButton();
+        jBotonIanus = new javax.swing.JButton();
+        jBotonIanusXedoc = new javax.swing.JButton();
+        jBotonXedoc = new javax.swing.JButton();
         jEtiquetaIanus = new javax.swing.JLabel();
         
         
@@ -141,28 +143,42 @@ public class SelectorUsuario extends javax.swing.JDialog {
 
 
         
-        jBoton1Ianus.setText("Aceptar");
-        jBoton1Ianus.addActionListener(new java.awt.event.ActionListener() {
+        jBotonIanus.setText("Ianus");
+        jBotonIanus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	VentanaDialogo.ianus_xedoc = 1;
             	dispose();
             }
         });
         
-        jBoton2Ianus.setVisible(false);
-        /*
-        jBoton2Ianus.setText("2 Ianus");
-        if(InicioIanus.documentacion == 2){
-        	jBoton2Ianus.setEnabled(false);
-        }
-        jBoton2Ianus.addActionListener(new java.awt.event.ActionListener() {
+        jBotonIanusXedoc.setVisible(true);
+        jBotonIanusXedoc.setBackground(Color.green);
+        jBotonIanusXedoc.requestFocus();
+        
+        jBotonIanusXedoc.setText("Ianus / Xedoc");
+
+        jBotonIanusXedoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBotonIanusActionPerformed(evt);
+            	VentanaDialogo.ianus_xedoc = 2;
+            	dispose();
             }
         });
 
+        
+        jBotonXedoc.setText("Xedoc");
+        jBotonXedoc.setEnabled(false);
+        jBotonXedoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	VentanaDialogo.ianus_xedoc = 3;
+            	dispose();
+            }
+        });
+        
+        /*
         jEtiquetaIanus.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jEtiquetaIanus.setText("¿Cuántos Ianus vas a utilizar?");
-         */
+        */
+        
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -171,9 +187,11 @@ public class SelectorUsuario extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jBoton1Ianus, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jBotonIanus, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(45, 45, 45)
-                        .addComponent(jBoton2Ianus, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jBotonIanusXedoc, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
+                        .addComponent(jBotonXedoc, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jEtiquetaIanus))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -184,8 +202,9 @@ public class SelectorUsuario extends javax.swing.JDialog {
                 .addComponent(jEtiquetaIanus)
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBoton1Ianus)
-                    .addComponent(jBoton2Ianus))
+                    .addComponent(jBotonIanus)
+                    .addComponent(jBotonIanusXedoc)
+                    .addComponent(jBotonXedoc))
                 .addGap(34, 34, 34))
         );
 
@@ -268,8 +287,9 @@ public class SelectorUsuario extends javax.swing.JDialog {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBoton1Ianus;
-    private javax.swing.JButton jBoton2Ianus;
+    private javax.swing.JButton jBotonIanus;
+    private javax.swing.JButton jBotonIanusXedoc;
+    private javax.swing.JButton jBotonXedoc;
     private javax.swing.JButton jBotonNUsuario;
     private javax.swing.JLabel jEtiquetaIanus;
     private javax.swing.JLabel jEtiquetaNUsuario;

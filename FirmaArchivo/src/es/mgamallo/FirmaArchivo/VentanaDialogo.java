@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
@@ -25,6 +27,16 @@ public class VentanaDialogo extends javax.swing.JFrame {
  	static String usuario;
  	static boolean tarjeta = false;
  	
+	LeerExcel leerExcel;
+	static String[] listaNombresDocumentos;
+	static String[] listaIanusXedoc;
+ 	
+ 	static int ianus_xedoc = 2;  	//  1 Ianus
+ 									//	2 Ianus y Xedoc
+ 									//  3 Xedoc
+ 	
+ 	static TreeMap<String, String> titIanus = new TreeMap<String, String>();
+									
 	
     public VentanaDialogo() {
         initComponents();
@@ -115,7 +127,6 @@ public class VentanaDialogo extends javax.swing.JFrame {
 
     
     
-    
     /**
      * @param args the command line arguments
      */
@@ -127,6 +138,11 @@ public class VentanaDialogo extends javax.swing.JFrame {
          */
     	
 
+		LeerExcel leerExcel = new LeerExcel();
+		leerExcel.leer("Documentos.xls");
+		listaNombresDocumentos = leerExcel.getNombres();
+		listaIanusXedoc = leerExcel.getIanusXedoc();
+		new VentanaDialogo().setTitulosIanus();
     	    	
     	File ficheroCertificado;
     	rutaCertificado ="";
@@ -297,6 +313,22 @@ public class VentanaDialogo extends javax.swing.JFrame {
             }
         });
     }
+    
+    
+    
+	private void setTitulosIanus(){
+		for(int i=0;i<listaNombresDocumentos.length;i++){
+			if(listaIanusXedoc[i].toLowerCase().equals("n")){
+				titIanus.put(listaNombresDocumentos[i],listaIanusXedoc[i]);
+			}
+		}
+		
+		Iterator it = titIanus.keySet().iterator();
+		while(it.hasNext()){
+			String clave = (String) it.next();
+			System.out.println("Nombre: " + clave + ". Valor: " + titIanus.get(clave));
+		}
+	}
 
     // Variables declaration - do not modify                     
     public javax.swing.JProgressBar barraProgresoCarpeta;
