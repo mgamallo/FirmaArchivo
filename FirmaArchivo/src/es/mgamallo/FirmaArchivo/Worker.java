@@ -89,7 +89,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 			boolean pinCorrecto;
 			numeroPdfs = fc.carpetas[i].pdfs.length;
 			for(int j=0;j < numeroPdfs;j++){
-				System.out.println("\t" + fc.carpetas[i].pdfs[j].getName().toString());
+				System.out.println("Primer fichero de la carpeta: \t" + fc.carpetas[i].pdfs[j].getName().toString());
 				if(i == 0 && j == 0){
 					JOptionPane.showMessageDialog(null, "Empieza la firma");
 				}
@@ -216,15 +216,13 @@ public class Worker extends SwingWorker<Double, Integer>{
 				carpetaFirmado = "\\03 Firmado Xedoc\\";
 			}
 		}
-	
-		System.out.println(nombreCarpetaPdf);
+
 		
 		String rutaCarpetaAbuela = archivoOrigen.getParentFile().getParentFile().getParentFile().getAbsolutePath();
 		
-		System.out.println(rutaCarpetaAbuela);
-		
 		String rutaFinalDirectorio = rutaCarpetaAbuela +  carpetaFirmado /* "\\03 Firmado\\" */ + nombreCarpetaPdf + "\\" ;
 		
+	
 		File crearCarpetaDestino = new File(rutaFinalDirectorio);
 		crearCarpetaDestino.mkdirs();
 		
@@ -269,16 +267,18 @@ public class Worker extends SwingWorker<Double, Integer>{
 	
 	private boolean sePuedeSubirEnIanus(String nombrePdf){
 		
+		String compruebaSeparador = nombrePdf;
 		int inicio = nombrePdf.lastIndexOf("@") + 1;
-		int fin = nombrePdf.lastIndexOf("r_f");
+		int fin = nombrePdf.lastIndexOf("r.pdf");
 		
-		String documento = nombrePdf.substring(inicio,fin);
+		nombrePdf = nombrePdf.substring(inicio,fin-1);
 		
-		if(VentanaDialogo.titIanus.containsKey(documento)){
+		if(VentanaDialogo.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
+			System.out.println(nombrePdf + " se puede subir a ianus.");
 			return true;
 		}
 		
-		
+		System.out.println(nombrePdf + " no se puede subir a ianus.");
 		return false;
 	}
 }
