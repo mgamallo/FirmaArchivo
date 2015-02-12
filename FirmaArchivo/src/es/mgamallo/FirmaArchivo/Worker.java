@@ -214,6 +214,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 			}
 			else{
 				carpetaFirmado = "\\03 Firmado Xedoc\\";
+				nombreCarpetaPdf = nombreCarpetaPdf.replace("#", " ");
 			}
 		}
 

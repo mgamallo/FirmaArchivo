@@ -139,7 +139,7 @@ public class VentanaDialogo extends javax.swing.JFrame {
     	
 
 		LeerExcel leerExcel = new LeerExcel();
-		leerExcel.leer("Documentos.xls");
+		leerExcel.leer("DocumentosIanus2.xls");
 		listaNombresDocumentos = leerExcel.getNombres();
 		listaIanusXedoc = leerExcel.getIanusXedoc();
 		new VentanaDialogo().setTitulosIanus();
