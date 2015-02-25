@@ -139,7 +139,9 @@ public class VentanaDialogo extends javax.swing.JFrame {
     	
 
 		LeerExcel leerExcel = new LeerExcel();
+		
 		leerExcel.leer("DocumentosIanus2.xls");
+		
 		listaNombresDocumentos = leerExcel.getNombres();
 		listaIanusXedoc = leerExcel.getIanusXedoc();
 		new VentanaDialogo().setTitulosIanus();
@@ -160,6 +162,19 @@ public class VentanaDialogo extends javax.swing.JFrame {
     		else{
     			usuarioDeUrgencias = false;
     			System.out.println("Documentacion");
+    		}
+    		
+    		int sel = JOptionPane.showOptionDialog(null, "Carpeta de destino.", "Carpeta destino", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Ianus","Ianus/Xedoc","Xedoc"}, "Ianus/Xedoc");    		
+    		if(sel != -1){
+    			if(sel == 0){
+    				ianus_xedoc = 1;
+    			}
+    			else if(sel == 1){
+    				ianus_xedoc = 2;
+    			}
+    			else if(sel == 2){
+    				ianus_xedoc = 3;
+    			}
     		}
     	}
     	else{

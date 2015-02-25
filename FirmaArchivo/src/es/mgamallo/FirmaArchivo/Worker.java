@@ -32,6 +32,10 @@ public class Worker extends SwingWorker<Double, Integer>{
 	
 	private Filechooser fc;
 	
+	private int numPdfsTotal = 0;
+	private int numPdfsIanus = 0;
+	private int numPdfsXedoc = 0;
+	
 	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, boolean usuarioUrgencias, boolean tarjeta){
 		this.conteoCarpeta =conteoCarpeta;
 		this.conteoTotal = conteoTotal;
@@ -123,7 +127,19 @@ public class Worker extends SwingWorker<Double, Integer>{
 	}
 	
 	protected void done(){
-		JOptionPane.showMessageDialog(null, "Firma terminada");
+		
+		String texto = "Numero de pdfs firmados: " + numPdfsTotal;
+		texto += "\nNumero de pdfs para Ianus: " + numPdfsIanus;
+		texto += "\nNumero de pdfs para Xedoc: " + numPdfsXedoc;
+		
+		if(numPdfsTotal == (numPdfsIanus + numPdfsXedoc)){
+			texto += "\nFirma finalizada con éxito.";
+		}
+		else{
+			texto += "\nHay documentos que no han sido firmados!!";
+		}
+		
+		JOptionPane.showMessageDialog(null, texto);
 		System.out.println(certificado);
 		File f = new File(certificado);
 		if(f.delete())
@@ -149,8 +165,10 @@ public class Worker extends SwingWorker<Double, Integer>{
 					usuarioUrgenciasCadena = "true";
 				}
 				
-				String comando = "java -jar Revision2014.jar " + usuario 
+				String comando = "java -jar Revision2015.jar " + usuario 
 						+ " " + usuarioUrgenciasCadena;
+				
+				System.out.println(comando);
 				
 				Runtime.getRuntime().exec(comando);
 			} catch (IOException e) {
@@ -202,19 +220,24 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		String carpetaFirmado = "";
 		
+		numPdfsTotal++;
 		if(VentanaDialogo.ianus_xedoc == 1){
 			carpetaFirmado = "\\03 Firmado\\";
+			numPdfsIanus++;
 		}
 		else if(VentanaDialogo.ianus_xedoc == 3){
 			carpetaFirmado = "\\03 Firmado Xedoc\\";
+			numPdfsXedoc++;
 		}
 		else{
 			if(sePuedeSubirEnIanus(nombrePdf)){
 				carpetaFirmado = "\\03 Firmado\\";
+				numPdfsIanus++;
 			}
 			else{
 				carpetaFirmado = "\\03 Firmado Xedoc\\";
-				nombreCarpetaPdf = nombreCarpetaPdf.replace("#", " ");
+				numPdfsXedoc++;
+			//	nombreCarpetaPdf = nombreCarpetaPdf.replace("#", " ");
 			}
 		}
 
@@ -269,6 +292,9 @@ public class Worker extends SwingWorker<Double, Integer>{
 	private boolean sePuedeSubirEnIanus(String nombrePdf){
 		
 		String compruebaSeparador = nombrePdf;
+		
+		
+		
 		int inicio = nombrePdf.lastIndexOf("@") + 1;
 		int fin = nombrePdf.lastIndexOf("r.pdf");
 		
@@ -276,6 +302,14 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		if(VentanaDialogo.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
 			System.out.println(nombrePdf + " se puede subir a ianus.");
+			
+			//  Chapuza **********************************************************
+			
+			if(nombrePdf.contains("Cardiotocogr") && compruebaSeparador.contains("URG")){
+				return false;
+			}
+				
+			/**************************************************************************/	
 			return true;
 		}
 		
