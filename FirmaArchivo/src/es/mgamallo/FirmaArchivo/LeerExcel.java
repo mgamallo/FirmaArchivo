@@ -54,7 +54,7 @@ public class LeerExcel {
 	        
 	        System.out.println("Num filas = " + numFilas + ". Num columnas = " + numColumnas);
 	        
-	        servicios = new String[numColumnas - 13];
+	        servicios = new String[numColumnas - 14];
 	        nombres = new String[numFilas - 1];
 	        
 
@@ -64,6 +64,7 @@ public class LeerExcel {
 	        // Lista de todos los nombres
 	        for(int fila = 0;fila<nombres.length;fila++){
 	        	nombres[fila] = hoja.getCell(0,fila + 1).getContents().toString();
+	        	System.out.println(nombres[fila]);
 	        }
 	        
 
