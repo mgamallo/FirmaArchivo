@@ -333,7 +333,7 @@ public class VentanaDialogo extends javax.swing.JFrame {
     
 	private void setTitulosIanus(){
 		for(int i=0;i<listaNombresDocumentos.length;i++){
-			if(listaIanusXedoc[i].toLowerCase().equals("n")){
+			if(listaIanusXedoc[i].toLowerCase().equals("n") || listaIanusXedoc[i].toLowerCase().equals("s")){
 				titIanus.put(listaNombresDocumentos[i],listaIanusXedoc[i]);
 			}
 		}

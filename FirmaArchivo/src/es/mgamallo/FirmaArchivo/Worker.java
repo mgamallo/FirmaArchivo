@@ -303,13 +303,6 @@ public class Worker extends SwingWorker<Double, Integer>{
 		if(VentanaDialogo.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
 			System.out.println(nombrePdf + " se puede subir a ianus.");
 			
-			//  Chapuza **********************************************************
-			
-			if(nombrePdf.contains("Cardiotocogr") && compruebaSeparador.contains("URG")){
-				return false;
-			}
-				
-			/**************************************************************************/	
 			return true;
 		}
 		
