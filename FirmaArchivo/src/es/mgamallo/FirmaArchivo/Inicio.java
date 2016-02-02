@@ -15,15 +15,17 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-public class VentanaDialogo extends javax.swing.JFrame {
+public class Inicio extends javax.swing.JFrame {
 
     /**
      * Creates new form VentanaDialogo
      */
 		
+	static final String REVISION = "Revision2016.jar ";
+	
 	static String rutaCertificado ="";
 	static String clavePin = "";
-	static boolean usuarioDeUrgencias = false;
+	static int tipoDeDocumentacion = 1;
  	static String usuario;
  	static boolean tarjeta = false;
  	
@@ -37,8 +39,9 @@ public class VentanaDialogo extends javax.swing.JFrame {
  	
  	static TreeMap<String, String> titIanus = new TreeMap<String, String>();
 									
+ 	static String argumentos[];
 	
-    public VentanaDialogo() {
+    public Inicio() {
         initComponents();
     }
 
@@ -144,23 +147,29 @@ public class VentanaDialogo extends javax.swing.JFrame {
 		
 		listaNombresDocumentos = leerExcel.getNombres();
 		listaIanusXedoc = leerExcel.getIanusXedoc();
-		new VentanaDialogo().setTitulosIanus();
+		new Inicio().setTitulosIanus();
     	    	
     	File ficheroCertificado;
     	rutaCertificado ="";
     	
     	String passwordZip = "";
-     	    	    	
-    	
+ 
     	
     	if(args.length>0){
+    		
+    		argumentos = args;
+    		
     		usuario = args[0];
     		if(args[1].equals("urgencias")){
-    			usuarioDeUrgencias = true;
+    			tipoDeDocumentacion = 0;
     			System.out.println("Urgencias");
     		}
-    		else{
-    			usuarioDeUrgencias = false;
+    		else if(args[1].equals("salnés")){
+    			tipoDeDocumentacion = 2;
+    			System.out.println("Salnes");
+    		}
+    		else if(args[1].equals("documentación")){
+    			tipoDeDocumentacion = 1;
     			System.out.println("Documentacion");
     		}
     		
@@ -178,22 +187,19 @@ public class VentanaDialogo extends javax.swing.JFrame {
     		}
     	}
     	else{
-    		
+    		argumentos = null;
     		System.out.println("no hay argumentos");
     		
     		int opcion = JOptionPane.showOptionDialog(null, "¿Qué documentación vas a firmar?", "Selector de documentación", 
-    				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Urgencias","Documentación"}, "Documentación");
-    		
-    		if(opcion == JOptionPane.OK_OPTION){
-    			usuarioDeUrgencias = true;
-    		}else{
-    			usuarioDeUrgencias = false;
-    		}
+    				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Urgencias","Documentación", "Salnés"}, "Documentación");
+
+    		tipoDeDocumentacion = opcion;
+
     		
 			SelectorUsuario selector = new SelectorUsuario(null, true);
         	usuario = selector.getUsuario();
     		
-    		System.out.println(usuarioDeUrgencias);
+    		System.out.println(tipoDeDocumentacion);
 
     	}	
     		// String nombreCertificado = "cal\\certificados\\" + usuario.toLowerCase() + ".pfx";
@@ -302,13 +308,13 @@ public class VentanaDialogo extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaDialogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaDialogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaDialogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaDialogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Inicio.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -316,11 +322,11 @@ public class VentanaDialogo extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
             	
-                VentanaDialogo ventana = new VentanaDialogo();
+                Inicio ventana = new Inicio();
                 ventana.setVisible(true);
                 
                 
-                Worker worker = new Worker(usuario, ventana.progresoCarpetaJL, ventana.progresoTotalJL, ventana.barraProgresoCarpeta, ventana.barraProgresoTotal,rutaCertificado,clavePin,usuarioDeUrgencias,tarjeta);
+                Worker worker = new Worker(usuario, ventana.progresoCarpetaJL, ventana.progresoTotalJL, ventana.barraProgresoCarpeta, ventana.barraProgresoTotal,rutaCertificado,clavePin,tipoDeDocumentacion,tarjeta);
                 worker.execute();
                 
                 

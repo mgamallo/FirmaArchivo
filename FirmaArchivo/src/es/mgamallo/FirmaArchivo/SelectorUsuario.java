@@ -146,7 +146,7 @@ public class SelectorUsuario extends javax.swing.JDialog {
         jBotonIanus.setText("Ianus");
         jBotonIanus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	VentanaDialogo.ianus_xedoc = 1;
+            	Inicio.ianus_xedoc = 1;
             	dispose();
             }
         });
@@ -159,7 +159,7 @@ public class SelectorUsuario extends javax.swing.JDialog {
 
         jBotonIanusXedoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	VentanaDialogo.ianus_xedoc = 2;
+            	Inicio.ianus_xedoc = 2;
             	dispose();
             }
         });
@@ -169,7 +169,7 @@ public class SelectorUsuario extends javax.swing.JDialog {
         jBotonXedoc.setEnabled(false);
         jBotonXedoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	VentanaDialogo.ianus_xedoc = 3;
+            	Inicio.ianus_xedoc = 3;
             	dispose();
             }
         });

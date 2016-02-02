@@ -2,6 +2,7 @@ package es.mgamallo.FirmaArchivo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -9,12 +10,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+import org.omg.CORBA.portable.ValueOutputStream;
+
 public class Worker extends SwingWorker<Double, Integer>{
 
+	
+	
 	static final String RUTA = "j:/digitalización/00 documentacion/02 Revisado"; 
 	static final String RUTAB = "h:/digitalización/00 documentacion/02 Revisado";
 	static final String RUTAURG ="j:/DIGITALIZACIÓN/01 INFORMES URG (Colectiva)"; 
 	static final String RUTAURGB ="H:/DIGITALIZACIÓN/01 INFORMES URG (Colectiva)";	
+	static final String RUTASAL = "j:/digitalización/02 Salnés/02 Revisado"; 
+	static final String RUTASALB = "h:/digitalización/02 Salnés/02 Revisado";
 	
 	private final JLabel conteoCarpeta;
 	private final JLabel conteoTotal;
@@ -23,10 +30,10 @@ public class Worker extends SwingWorker<Double, Integer>{
 	
 	private String certificado = "";
 	private String password = "";
-	private boolean usuarioUrgencias;
+	private int tipoDeDocumentacion;
 	private String usuario;
 	private boolean tarjeta;
-	private VentanaDialogo ventana;
+	private Inicio ventana;
 	
 	private String rutaDirectorio ="";
 	
@@ -36,14 +43,16 @@ public class Worker extends SwingWorker<Double, Integer>{
 	private int numPdfsIanus = 0;
 	private int numPdfsXedoc = 0;
 	
-	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, boolean usuarioUrgencias, boolean tarjeta){
+	private ArrayList<File> carpetasFirmadas = new ArrayList<File>();
+	
+	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, int tipoDeDocumento, boolean tarjeta){
 		this.conteoCarpeta =conteoCarpeta;
 		this.conteoTotal = conteoTotal;
 		this.progresoCarpeta = progresoCapeta;
 		this.progresoTotal = progresoTotal;
 		this.certificado = certificado;
 		this.password = password;
-		this.usuarioUrgencias = usuarioUrgencias;
+		this.tipoDeDocumentacion = tipoDeDocumento;
 		//this.ventana = ventana;
 		this.usuario = usuario;
 		this.tarjeta = tarjeta;
@@ -56,17 +65,22 @@ public class Worker extends SwingWorker<Double, Integer>{
 		System.out.println("Estamos en doInBackground, en el hilo " + 
 				Thread.currentThread().getName());
 		
-		if(usuarioUrgencias){
+		if(tipoDeDocumentacion == 0){
 			rutaDirectorio = RUTAURG;
 			if(!(new File(rutaDirectorio).exists()))
 				rutaDirectorio = RUTAURGB;
 			if(!tarjeta)
 				rutaDirectorio += ("\\01 " + usuario + "\\02 Revisado");
 		}
-		else{
+		else if(tipoDeDocumentacion == 1){
 			rutaDirectorio = RUTA;
 			if(!(new File(rutaDirectorio).exists()))
 				rutaDirectorio = RUTAB;
+		}
+		else if(tipoDeDocumentacion == 2){
+			rutaDirectorio = RUTASAL;
+			if(!(new File(rutaDirectorio).exists()))
+				rutaDirectorio = RUTASALB;
 		}
 		
 		//JOptionPane.showMessageDialog(null, rutaDirectorio);
@@ -94,6 +108,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 			numeroPdfs = fc.carpetas[i].pdfs.length;
 			for(int j=0;j < numeroPdfs;j++){
 				System.out.println("Primer fichero de la carpeta: \t" + fc.carpetas[i].pdfs[j].getName().toString());
+				String carpetaFirmada = "";
 				if(i == 0 && j == 0){
 					JOptionPane.showMessageDialog(null, "Empieza la firma");
 				}
@@ -120,7 +135,15 @@ public class Worker extends SwingWorker<Double, Integer>{
 				// Thread.sleep(100);
 				
 				publish(porcentajePdfs, porcentajeCarpetas,j+1,i+1,numeroPdfs,numeroCarpetas);
+				
+
 			}
+			
+			
+			System.out.println("Nombre de la carpeta " + fc.carpetas[i].rutaCarpeta.getName());
+			carpetasFirmadas.add(fc.carpetas[i].rutaCarpeta);
+		//	JOptionPane.showMessageDialog(null, marcaCarpetaFirmada(fc.carpetas[i].rutaCarpeta));
+			
 		}
 		
 		return 100.0;
@@ -139,6 +162,11 @@ public class Worker extends SwingWorker<Double, Integer>{
 			texto += "\nHay documentos que no han sido firmados!!";
 		}
 		
+		System.out.println(  quitarMarcaCarpetaSinFirmar()  );
+		
+		for(int i=0;i<carpetasFirmadas.size();i++)
+			carpetasFirmadas.remove(i);
+		
 		JOptionPane.showMessageDialog(null, texto);
 		System.out.println(certificado);
 		File f = new File(certificado);
@@ -151,40 +179,46 @@ public class Worker extends SwingWorker<Double, Integer>{
 			JOptionPane.showMessageDialog(null, "Errores en el borrado de las carpetas de revisado");
 		}
 		
-		int opcion = JOptionPane.showOptionDialog(null, "¿Quieres seguir revisando?", "Finalizando", 
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Si","No"}, "No");
 		
-		if(opcion == JOptionPane.OK_OPTION){
-			System.out.println("Queremos continuar.");
+		
+		if(Inicio.argumentos != null){
+			int opcion = JOptionPane.showOptionDialog(null, "¿Quieres seguir revisando?", "Finalizando", 
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, new Object[] {"Si","No"}, "No");
 			
-			try {
+			if(opcion == JOptionPane.OK_OPTION){
+				System.out.println("Queremos continuar.");
 				
-				String usuarioUrgenciasCadena = "false";
-				
-				if(usuarioUrgencias){
-					usuarioUrgenciasCadena = "true";
+				try {
+					
+					/*
+					String usuarioUrgenciasCadena = "false";
+					
+					if(tipoDeDocumentacion){
+						usuarioUrgenciasCadena = "true";
+					}
+					*/
+					
+					String usuarioUrgenciasCadena = String.valueOf(tipoDeDocumentacion);
+					
+					String comando = "java -jar " + Inicio.REVISION + usuario 
+							+ " " + usuarioUrgenciasCadena;
+					
+					System.out.println(comando);
+					
+					Runtime.getRuntime().exec(comando);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
-				String comando = "java -jar Revision2015.jar " + usuario 
-						+ " " + usuarioUrgenciasCadena;
+				System.out.println("Salimos");
+				System.exit(0);
 				
-				System.out.println(comando);
-				
-				Runtime.getRuntime().exec(comando);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
-			System.out.println("Salimos");
-			System.exit(0);
-			
-		}
-		else{
-			System.out.println("Salimos");
-			System.exit(0);
 		}
 
+		System.out.println("Salimos");
+		System.exit(0);
 	}
 	
 	protected void process(List<Integer> chunks){
@@ -192,6 +226,89 @@ public class Worker extends SwingWorker<Double, Integer>{
 		progresoTotal.setValue(chunks.get(1));
 		conteoCarpeta.setText("Pdf " + String.valueOf(chunks.get(2)) + " de " + String.valueOf(chunks.get(4)));
 		conteoTotal.setText("Carpeta " + String.valueOf(chunks.get(3)) + " de " + String.valueOf(chunks.get(5)));
+	}
+	
+	private boolean quitarMarcaCarpetaSinFirmar(){
+		
+		
+		boolean exito = false;
+				
+		for(int i=0;i<carpetasFirmadas.size();i++){
+			
+			String nombreCarpeta = carpetasFirmadas.get(i).getName();
+			System.out.println("Nombre de la carpeta con usuario" + nombreCarpeta);
+			
+			int quitarUsuario = nombreCarpeta.lastIndexOf(" ");
+			if(quitarUsuario != -1 || quitarUsuario != 0){
+				nombreCarpeta = nombreCarpeta.substring(0,quitarUsuario);
+			}
+			
+			// Busqueda en firmado
+			String directorioPadre = carpetasFirmadas.get(i).getParentFile().getParentFile().getAbsolutePath();
+			System.out.println("Carpeta Padre = " + directorioPadre);
+			System.out.println("Nombre carpeta = " + nombreCarpeta);
+			
+			String carpetaFirmadoIanus = "\\03 Firmado\\";
+			String carpetaFirmadoXedoc = "\\03 Firmado Xedoc\\";
+			
+			String directorioIanus = directorioPadre + carpetaFirmadoIanus;
+			directorioIanus += nombreCarpeta;
+			String directorioXedoc = directorioPadre + carpetaFirmadoXedoc;
+			directorioXedoc += nombreCarpeta;
+			
+			
+			System.out.println(directorioIanus);
+			System.out.println(directorioXedoc);
+			
+			File carpetaFirmadaIanus = new File(directorioIanus);
+			File carpetaFirmadaXedoc = new File(directorioXedoc);
+			
+			
+			if(carpetaFirmadaIanus.exists()){
+		//		JOptionPane.showMessageDialog(null, carpetaFirmadaIanus.getAbsolutePath() + " existe.");
+				String semaforo = "ç";
+				directorioIanus = directorioIanus.replace(semaforo, "");
+				
+				File carpetaSemaforo = new File(directorioIanus);
+				exito = carpetaFirmadaIanus.renameTo(carpetaSemaforo);
+			}
+			
+			if(carpetaFirmadaXedoc.exists()){
+		//		JOptionPane.showMessageDialog(null, carpetaFirmadaXedoc.getAbsolutePath() + " existe.");
+				String semaforo = "ç";
+				directorioXedoc = directorioXedoc.replace(semaforo, "");
+				
+				File carpetaSemaforo = new File(directorioXedoc);
+				exito = carpetaFirmadaXedoc.renameTo(carpetaSemaforo);
+			}
+		}
+		
+		
+		
+/*
+		
+		String carpetaFirmadoIanus = "\\03 Firmado\\";
+		String carpetaFirmadoXedoc = "\\03 Firmado Xedoc\\";
+
+		
+		String rutaCarpetaAbuela = carpetaRevisada.getParentFile().getAbsolutePath();
+		System.out.println(rutaCarpetaAbuela);
+		
+		String rutaFinalDirectorio = rutaCarpetaAbuela +  carpetaFirmadoIanus + nombreCarpeta + "\\" ;
+		
+	
+		File carpetaFirmada = new File(rutaFinalDirectorio);
+		
+		if(carpetaFirmada.exists()){
+			JOptionPane.showMessageDialog(null, carpetaFirmada.getName() + " existe.");
+			String semaforo = " ç.";
+			rutaFinalDirectorio += semaforo;
+			
+			File carpetaSemaforo = new File(rutaFinalDirectorio);
+			return carpetaFirmada.renameTo(carpetaSemaforo);
+		}
+		*/
+		return exito;
 	}
 	
 	private String renombrarFicheroFirmado(File archivoOrigen){
@@ -221,11 +338,11 @@ public class Worker extends SwingWorker<Double, Integer>{
 		String carpetaFirmado = "";
 		
 		numPdfsTotal++;
-		if(VentanaDialogo.ianus_xedoc == 1){
+		if(Inicio.ianus_xedoc == 1){
 			carpetaFirmado = "\\03 Firmado\\";
 			numPdfsIanus++;
 		}
-		else if(VentanaDialogo.ianus_xedoc == 3){
+		else if(Inicio.ianus_xedoc == 3){
 			carpetaFirmado = "\\03 Firmado Xedoc\\";
 			numPdfsXedoc++;
 		}
@@ -264,6 +381,8 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		int numeroCarpetas = fc.carpetas.length;
 		int numeroPdfs = 0;
+		
+		/*
 		for(int i=0;i<numeroCarpetas;i++){
 
 			numeroPdfs = fc.carpetas[i].pdfs.length;
@@ -275,12 +394,41 @@ public class Worker extends SwingWorker<Double, Integer>{
 				}
 			}
 			
-			if(fc.carpetas[i].rutaCarpeta.delete()){
+			System.out.println(fc.carpetas[i].rutaCarpeta.getAbsolutePath());
+			JOptionPane.showMessageDialog(null, fc.carpetas[i].rutaCarpeta.getAbsolutePath() + " " + fc.carpetas[i].rutaCarpeta.exists() + " existe.");
+			
+			
+			if(!fc.carpetas[i].rutaCarpeta.delete()){
 				//sinErrores = false;
-				//System.out.println("Error en " + fc.carpetas[i].rutaCarpeta.getName().toString());
+				System.out.println("Error en " + fc.carpetas[i].rutaCarpeta.getName().toString());
 			}
 			
 		}
+		*/
+		
+		for(int i=0;i<numeroCarpetas;i++){
+
+			File ficheros[] = fc.carpetas[i].rutaCarpeta.listFiles();
+			for(int j=0;j < ficheros.length;j++){
+				//System.out.println("\t" + fc.carpetas[i].pdfs[j].getName().toString());
+				if(!ficheros[j].delete()){
+					sinErrores = false;
+					System.out.println("Error en " + ficheros[j].getName().toString());
+				}
+			}
+			
+			System.out.println(fc.carpetas[i].rutaCarpeta.getAbsolutePath());
+			// JOptionPane.showMessageDialog(null, fc.carpetas[i].rutaCarpeta.getAbsolutePath() + " " + fc.carpetas[i].rutaCarpeta.exists() + " existe.");
+			
+			
+			if(!fc.carpetas[i].rutaCarpeta.delete()){
+				//sinErrores = false;
+				System.out.println("Error en " + fc.carpetas[i].rutaCarpeta.getName().toString());
+			}
+			
+		}
+		
+		
 		
 		return sinErrores;
 		
@@ -300,7 +448,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		nombrePdf = nombrePdf.substring(inicio,fin-1);
 		
-		if(VentanaDialogo.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
+		if(Inicio.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
 			System.out.println(nombrePdf + " se puede subir a ianus.");
 			
 			return true;
