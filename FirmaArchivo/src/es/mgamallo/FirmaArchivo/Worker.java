@@ -177,6 +177,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		}
 		else{
 			JOptionPane.showMessageDialog(null, "Errores en el borrado de las carpetas de revisado");
+			System.exit(0);
 		}
 		
 		

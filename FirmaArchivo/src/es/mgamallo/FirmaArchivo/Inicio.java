@@ -244,6 +244,7 @@ public class Inicio extends javax.swing.JFrame {
         			}
         			else{
         				JOptionPane.showMessageDialog(null, "Certificado no disponible");
+        				System.exit(0);
         			}
     			}
     			else{
