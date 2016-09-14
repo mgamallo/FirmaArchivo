@@ -42,6 +42,12 @@ public class Firma {
 
 	public static boolean firmar(String ficheroOrigen, String ficheroDestino, String certificado, String clave){
 
+		System.out.println("Entramos en Firma.firmar()");
+		System.out.println(ficheroOrigen);
+		System.out.println(ficheroDestino);
+		System.out.println(certificado);
+		System.out.println(clave);
+		
 		 if(comprobarCertificado(certificado, clave)){
 			try {
 				String alias = (String)ks.aliases().nextElement();
@@ -93,6 +99,7 @@ public class Firma {
 		return false;
 	}
 
+	
 	public static boolean firmarContenedorIExplore(String ficheroOrigen, String ficheroDestino,String usuario, String clave){
 		
 			// if(comprobarCertificado(certificado, clave)){

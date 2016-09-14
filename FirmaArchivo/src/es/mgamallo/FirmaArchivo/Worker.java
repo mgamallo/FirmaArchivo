@@ -43,6 +43,8 @@ public class Worker extends SwingWorker<Double, Integer>{
 	private int numPdfsIanus = 0;
 	private int numPdfsXedoc = 0;
 	
+	private boolean error = false;
+	
 	private ArrayList<File> carpetasFirmadas = new ArrayList<File>();
 	
 	public Worker(/* VentanaDialogo ventana */ String usuario, JLabel conteoCarpeta, JLabel conteoTotal, JProgressBar progresoCapeta, JProgressBar progresoTotal, String certificado, String password, int tipoDeDocumento, boolean tarjeta){
@@ -104,7 +106,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		for(int i=0;i<numeroCarpetas;i++){
 		
-			boolean pinCorrecto;
+			boolean pinCorrecto = false;
 			numeroPdfs = fc.carpetas[i].pdfs.length;
 			for(int j=0;j < numeroPdfs;j++){
 				System.out.println("Primer fichero de la carpeta: \t" + fc.carpetas[i].pdfs[j].getName().toString());
@@ -113,13 +115,16 @@ public class Worker extends SwingWorker<Double, Integer>{
 					JOptionPane.showMessageDialog(null, "Empieza la firma");
 				}
 
+									
 				if(!tarjeta){
 					pinCorrecto = Firma.firmar(fc.carpetas[i].pdfs[j].getAbsolutePath(), 
 						renombrarFicheroFirmado(fc.carpetas[i].pdfs[j]), certificado, password);
+					System.out.println("Pin correcto: " + pinCorrecto);
 				}
 				else{
 					pinCorrecto = Firma.firmarContenedorIExplore(fc.carpetas[i].pdfs[j].getAbsolutePath(), 
 							renombrarFicheroFirmado(fc.carpetas[i].pdfs[j]), usuario, password);
+					System.out.println("Pin correcto: " + pinCorrecto);
 				}
 				// JOptionPane.showMessageDialog(null, pinCorrecto);	
 
@@ -140,7 +145,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 			}
 			
 			
-			System.out.println("Nombre de la carpeta " + fc.carpetas[i].rutaCarpeta.getName());
+		//	System.out.println("Nombre de la carpeta " + fc.carpetas[i].rutaCarpeta.getName());
 			carpetasFirmadas.add(fc.carpetas[i].rutaCarpeta);
 		//	JOptionPane.showMessageDialog(null, marcaCarpetaFirmada(fc.carpetas[i].rutaCarpeta));
 			
@@ -157,9 +162,16 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		if(numPdfsTotal == (numPdfsIanus + numPdfsXedoc)){
 			texto += "\nFirma finalizada con éxito.";
+			error = false;
 		}
 		else{
 			texto += "\nHay documentos que no han sido firmados!!";
+			error = true;
+		}
+		
+		if(error){
+			JOptionPane.showMessageDialog(null, texto);
+			System.exit(0);
 		}
 		
 		System.out.println(  quitarMarcaCarpetaSinFirmar()  );
@@ -336,9 +348,15 @@ public class Worker extends SwingWorker<Double, Integer>{
 		 		
 		 */
 		
+		System.out.println("Nombre carpeta pdf " + nombreCarpetaPdf);
+		
 		String carpetaFirmado = "";
 		
 		numPdfsTotal++;
+		
+		System.out.println("Numero pdfs total... " + numPdfsTotal);
+		
+		
 		if(Inicio.ianus_xedoc == 1){
 			carpetaFirmado = "\\03 Firmado\\";
 			numPdfsIanus++;
@@ -348,6 +366,9 @@ public class Worker extends SwingWorker<Double, Integer>{
 			numPdfsXedoc++;
 		}
 		else{
+			
+			System.out.println("Adios");
+			
 			if(sePuedeSubirEnIanus(nombrePdf)){
 				carpetaFirmado = "\\03 Firmado\\";
 				numPdfsIanus++;
@@ -359,12 +380,16 @@ public class Worker extends SwingWorker<Double, Integer>{
 			}
 		}
 
+		System.out.println("Holaaaa....");
 		
 		String rutaCarpetaAbuela = archivoOrigen.getParentFile().getParentFile().getParentFile().getAbsolutePath();
+		System.out.println("Ruta carpeta abuela: " + rutaCarpetaAbuela);
 		
 		String rutaFinalDirectorio = rutaCarpetaAbuela +  carpetaFirmado /* "\\03 Firmado\\" */ + nombreCarpetaPdf + "\\" ;
 		
-	
+		
+		System.out.println("Ruta final directorio " + rutaFinalDirectorio);
+		
 		File crearCarpetaDestino = new File(rutaFinalDirectorio);
 		crearCarpetaDestino.mkdirs();
 		
@@ -445,7 +470,14 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		
 		int inicio = nombrePdf.lastIndexOf("@") + 1;
+		if(inicio == -1){
+			return false;
+		}
+		
 		int fin = nombrePdf.lastIndexOf("r.pdf");
+		if(fin == -1){
+			fin = nombrePdf.lastIndexOf(".pdf");
+		}
 		
 		nombrePdf = nombrePdf.substring(inicio,fin-1);
 		
@@ -454,8 +486,9 @@ public class Worker extends SwingWorker<Double, Integer>{
 			
 			return true;
 		}
-		
-		System.out.println(nombrePdf + " no se puede subir a ianus.");
-		return false;
+		else{
+			System.out.println(nombrePdf + " no se puede subir a ianus.");
+			return false;
+		}
 	}
 }
