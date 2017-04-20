@@ -73,6 +73,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 				rutaDirectorio = RUTAURGB;
 			if(!tarjeta)
 				rutaDirectorio += ("\\01 " + usuario + "\\02 Revisado");
+			System.out.println(rutaDirectorio);
 		}
 		else if(tipoDeDocumentacion == 1){
 			rutaDirectorio = RUTA;
@@ -327,15 +328,9 @@ public class Worker extends SwingWorker<Double, Integer>{
 	private String renombrarFicheroFirmado(File archivoOrigen){
 		
 		System.out.println(archivoOrigen.getAbsolutePath());
-			
 		String nombrePdf = archivoOrigen.getName();	
 		System.out.println(nombrePdf);
-		
-		int ultimaR = nombrePdf.lastIndexOf(".");
-		
-		String nuevoNombrePdf = nombrePdf.substring(0,ultimaR) + "_f.pdf";
-		System.out.println(nuevoNombrePdf);
-		
+					
 		String nombreCarpetaPdf = archivoOrigen.getParentFile().getName();
 		int quitarUsuario = nombreCarpetaPdf.lastIndexOf(" ");
 		if(quitarUsuario != -1 || quitarUsuario != 0){
@@ -376,9 +371,18 @@ public class Worker extends SwingWorker<Double, Integer>{
 			else{
 				carpetaFirmado = "\\03 Firmado Xedoc\\";
 				numPdfsXedoc++;
+				nombrePdf = Renombre.getNombreXedocPdf(nombrePdf);
 			//	nombreCarpetaPdf = nombreCarpetaPdf.replace("#", " ");
 			}
 		}
+		
+				
+		int ultimaR = nombrePdf.lastIndexOf(".");
+		
+		String nuevoNombrePdf = nombrePdf.substring(0,ultimaR) + "_f.pdf";
+		System.out.println(nuevoNombrePdf);
+		
+		
 
 		System.out.println("Holaaaa....");
 		
@@ -470,6 +474,11 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		
 		int inicio = nombrePdf.lastIndexOf("@") + 1;
+		
+		String servicio = nombrePdf.substring(0,inicio-1);
+		
+		System.out.println(servicio);
+		
 		if(inicio == -1){
 			return false;
 		}
@@ -481,6 +490,11 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		nombrePdf = nombrePdf.substring(inicio,fin-1);
 		
+		if(nombrePdf.equals(Inicio.CONSENTIMIENTO) && servicio.contains(Inicio.SERVICIO_RADG)){
+			System.out.println("Es radg");
+			return false;
+		}
+		
 		if(Inicio.titIanus.containsKey(nombrePdf) || compruebaSeparador.contains("Separador") ){
 			System.out.println(nombrePdf + " se puede subir a ianus.");
 			
@@ -491,4 +505,5 @@ public class Worker extends SwingWorker<Double, Integer>{
 			return false;
 		}
 	}
+
 }

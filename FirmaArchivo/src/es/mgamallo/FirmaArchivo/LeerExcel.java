@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import javax.swing.JOptionPane;
+
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -18,7 +20,9 @@ public class LeerExcel {
 	private String[] servicios;
 	private String[] nombres;
 	
-	public String[] ianus_xedoc;
+	private String[][] asociacionesDocumentos;
+	
+	public String[][] ianus_xedoc;
 
 	
 	
@@ -73,15 +77,36 @@ public class LeerExcel {
 	        	        
 	        
 	        //  Ianus_Xedoc
-	        ianus_xedoc = new String[nombres.length];
+	        ianus_xedoc = new String[nombres.length][6];
+	        
+	        /*
 	        for(int fila=0;fila<nombres.length;fila++){
 	        	ianus_xedoc[fila] = hoja.getCell(servicios.length + 3,fila+1).getContents().toString();
 	        	System.out.println(ianus_xedoc[fila]);
 	        }
-	        
-	        
+	        */
 
-
+	        for(int fila = 0; fila < nombres.length;fila++){
+	        	for(int columna = 0;columna < 6; columna++){
+	        		ianus_xedoc[fila][columna] = hoja.getCell(columna + servicios.length + 2 + 1,fila +1).getContents().toString();
+	        	}
+	        }
+	        
+	        /*
+	        JOptionPane.showMessageDialog(null, "Ver asociaciacionesDocumentos");
+	        
+	        for(int fila = 0; fila < nombres.length;fila++){
+	        	for(int columna = 0;columna < 6; columna++){
+	        		if(columna == 0){
+	        			System.out.print((fila+2));
+	        		}
+	        		System.out.print("\t" + ianus_xedoc[fila][columna]);
+	        	}
+	        	System.out.println();
+	        }
+	        
+	        JOptionPane.showMessageDialog(null, "Visto asociaciacionesDocumentos");
+			*/
 
 	        
 	        
@@ -100,7 +125,7 @@ public class LeerExcel {
 		return nombres;
 	}
 	
-	public String[] getIanusXedoc(){
+	public String[][] getIanusXedoc(){
 		return ianus_xedoc;
 	}
 

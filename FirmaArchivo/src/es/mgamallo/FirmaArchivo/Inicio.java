@@ -23,6 +23,8 @@ public class Inicio extends javax.swing.JFrame {
 		
 	static final String REVISION = "Revision2016.jar ";
 	
+	static final String CONSENTIMIENTO = "Consentimento informado";
+	static final String SERVICIO_RADG = "RADG";
 	static String rutaCertificado ="";
 	static String clavePin = "";
 	static int tipoDeDocumentacion = 1;
@@ -31,13 +33,19 @@ public class Inicio extends javax.swing.JFrame {
  	
 	LeerExcel leerExcel;
 	static String[] listaNombresDocumentos;
-	static String[] listaIanusXedoc;
+	static String[][] listaIanusXedoc;
  	
  	static int ianus_xedoc = 2;  	//  1 Ianus
  									//	2 Ianus y Xedoc
  									//  3 Xedoc
  	
- 	static TreeMap<String, String> titIanus = new TreeMap<String, String>();
+ 	static final String HOSP = "HOSP";
+ 	static final String CIA = "CIA";
+ 	static final String URG = "URG";
+ 	static final String SIN_TIPO = "16700";		// Código Xedoc
+ 	
+ 	static TreeMap<String, String[]> titIanus = new TreeMap<String, String[]>();
+ 	static TreeMap<String, String[]> titXedoc = new TreeMap<String, String[]>();
 									
  	static String argumentos[];
 	
@@ -198,6 +206,8 @@ public class Inicio extends javax.swing.JFrame {
     		
 			SelectorUsuario selector = new SelectorUsuario(null, true);
         	usuario = selector.getUsuario();
+        	
+        	System.out.println(usuario);
     		
     		System.out.println(tipoDeDocumentacion);
 
@@ -340,16 +350,31 @@ public class Inicio extends javax.swing.JFrame {
     
 	private void setTitulosIanus(){
 		for(int i=0;i<listaNombresDocumentos.length;i++){
-			if(listaIanusXedoc[i].toLowerCase().equals("n") || listaIanusXedoc[i].toLowerCase().equals("s")){
+			if(listaIanusXedoc[i][0].toLowerCase().equals("n") || listaIanusXedoc[i][0].toLowerCase().equals("s")){
 				titIanus.put(listaNombresDocumentos[i],listaIanusXedoc[i]);
+			}
+			else{
+				titXedoc.put(listaNombresDocumentos[i],listaIanusXedoc[i]);
 			}
 		}
 		
-		Iterator it = titIanus.keySet().iterator();
+		
+        JOptionPane.showMessageDialog(null, "Ver asociaciacionesDocumentos");
+		
+		Iterator<String> it = titXedoc.keySet().iterator();
 		while(it.hasNext()){
 			String clave = (String) it.next();
-			System.out.println("Nombre: " + clave + ". Valor: " + titIanus.get(clave));
+			System.out.println("Nombre: " + clave + ". Valor: " + titXedoc.get(clave)[0] +
+					"\t" + titXedoc.get(clave)[1] +
+					"\t" + titXedoc.get(clave)[2] +
+					"\t" + titXedoc.get(clave)[3] +
+					"\t" + titXedoc.get(clave)[4] +
+					"\t" + titXedoc.get(clave)[5] 
+					);
 		}
+		
+        JOptionPane.showMessageDialog(null, "Visto asociaciacionesDocumentos");
+        
 	}
 
     // Variables declaration - do not modify                     

@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/Zip4j/zip4j_1.3.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/itext-2.1.7.jar"/>
 	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/bcprov-ext-jdk15-144.jar"/>
-	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/JXL.JAR" sourcepath="C:/Documents and Settings/cahcpon/.m2/repository/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/jsoup-1.9.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/jexcelapi_2_6_12/jexcelapi/JXL.JAR" sourcepath="C:/Documents and Settings/cahcpon/.m2/repository/net/sourceforge/jexcelapi/jxl/2.6.12/jxl-2.6.12-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mgamgul1/Desarrollo/01 Librerias/jsoup-1.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
