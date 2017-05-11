@@ -33,17 +33,35 @@ public class Renombre {
 			
 			int aux;
 			if((aux = nombre.indexOf("(")) != -1){
+				nombreIndexado = nombreIndexado.substring(0, aux).trim();
 				titulo = nombre.substring(aux + 1, nombre.indexOf(")"));
 				nombre = nombre.substring(0, aux-1);
 			}
 		}
 		
+		/*
 		String resultado = parametros[0] + "@v1_" + nhc 
-				                         + " @v2_" + getCodigoTipo(nombreIndexado, servicio, Inicio.titXedoc)
+				                        // + " @v2_" + getCodigoTipo(nombreIndexado, servicio, Inicio.titXedoc)
+				                         + " @v2_" + nombreIndexado
 				                         + " @v4_" + servicio
 				                         + " @v5_" + titulo
 				                         + " @v6_" + fecha
-				                         + " r.pdf";
+				                       //  + " r.pdf";
+										 + ".pdf";
+		*/
+		
+		String resultado = parametros[0] + "r_f @v1_" + nhc  + " @v2_" + nombreIndexado + " @v4_" + servicio ;
+		
+		if(titulo.length() > 0){
+			resultado +=  (" @v5_" + titulo);
+		}
+		
+		if(fecha.length() > 0){
+			resultado +=  (" @v6_" + fecha);
+		}
+		
+		resultado += ".pdf";
+		
 		return resultado;
 	}
 	

@@ -359,8 +359,8 @@ public class Inicio extends javax.swing.JFrame {
 		}
 		
 		
-        JOptionPane.showMessageDialog(null, "Ver asociaciacionesDocumentos");
-		
+     //   JOptionPane.showMessageDialog(null, "Ver asociaciacionesDocumentos");
+	 /*	
 		Iterator<String> it = titXedoc.keySet().iterator();
 		while(it.hasNext()){
 			String clave = (String) it.next();
@@ -372,8 +372,8 @@ public class Inicio extends javax.swing.JFrame {
 					"\t" + titXedoc.get(clave)[5] 
 					);
 		}
-		
-        JOptionPane.showMessageDialog(null, "Visto asociaciacionesDocumentos");
+	*/	
+      //  JOptionPane.showMessageDialog(null, "Visto asociaciacionesDocumentos");
         
 	}
 

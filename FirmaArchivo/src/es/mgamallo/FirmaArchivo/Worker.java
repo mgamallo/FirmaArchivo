@@ -351,7 +351,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		
 		System.out.println("Numero pdfs total... " + numPdfsTotal);
 		
-		
+		boolean eliminarF = false;
 		if(Inicio.ianus_xedoc == 1){
 			carpetaFirmado = "\\03 Firmado\\";
 			numPdfsIanus++;
@@ -359,6 +359,7 @@ public class Worker extends SwingWorker<Double, Integer>{
 		else if(Inicio.ianus_xedoc == 3){
 			carpetaFirmado = "\\03 Firmado Xedoc\\";
 			numPdfsXedoc++;
+			eliminarF = true;
 		}
 		else{
 			
@@ -373,13 +374,21 @@ public class Worker extends SwingWorker<Double, Integer>{
 				numPdfsXedoc++;
 				nombrePdf = Renombre.getNombreXedocPdf(nombrePdf);
 			//	nombreCarpetaPdf = nombreCarpetaPdf.replace("#", " ");
+				eliminarF = true;
 			}
 		}
 		
 				
 		int ultimaR = nombrePdf.lastIndexOf(".");
 		
-		String nuevoNombrePdf = nombrePdf.substring(0,ultimaR) + "_f.pdf";
+		String nuevoNombrePdf;
+		
+		if(!eliminarF){
+			nuevoNombrePdf= nombrePdf.substring(0,ultimaR) + "_f.pdf";
+		}
+		else{
+			nuevoNombrePdf= nombrePdf.substring(0,ultimaR) + ".pdf";
+		}
 		System.out.println(nuevoNombrePdf);
 		
 		
