@@ -21,7 +21,7 @@ public class Inicio extends javax.swing.JFrame {
      * Creates new form VentanaDialogo
      */
 		
-	static final String REVISION = "Revision2016.jar ";
+	static final String REVISION = "Revision2017.jar ";
 	
 	static final String CONSENTIMIENTO = "Consentimento informado";
 	static final String SERVICIO_RADG = "RADG";

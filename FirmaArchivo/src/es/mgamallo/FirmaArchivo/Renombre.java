@@ -50,17 +50,17 @@ public class Renombre {
 										 + ".pdf";
 		*/
 		
-		String resultado = parametros[0] + "r_f @v1_" + nhc  + " @v2_" + nombreIndexado + " @v4_" + servicio ;
+		String resultado = parametros[0] + "r_f "  + " @p2_" + nombreIndexado + " @p4_" + servicio ;
 		
 		if(titulo.length() > 0){
-			resultado +=  (" @v5_" + titulo);
+			resultado +=  (" @p5_" + titulo);
 		}
 		
 		if(fecha.length() > 0){
-			resultado +=  (" @v6_" + fecha);
+			resultado +=  (" @p6_" + fecha);
 		}
 		
-		resultado += ".pdf";
+		resultado +=(" @v1_" + nhc +"_.pdf");
 		
 		return resultado;
 	}
